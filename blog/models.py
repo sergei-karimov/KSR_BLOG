@@ -1,4 +1,5 @@
 import math
+import uuid
 from django.db import models
 from django.urls import reverse
 
@@ -56,7 +57,7 @@ class Subscriber(models.Model):
     email = models.EmailField(unique=True)
     confirmed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    unsubscribe_token = models.UUIDField(unique=True)
+    unsubscribe_token = models.UUIDField(unique=True, default=uuid.uuid4)
 
     def __str__(self):
         return self.email

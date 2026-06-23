@@ -1,5 +1,4 @@
 import pytest
-from django.utils.text import slugify
 
 pytestmark = pytest.mark.django_db
 
@@ -18,8 +17,9 @@ def test_post_str():
 
 def test_post_get_absolute_url():
     from blog.models import Post
+    from django.urls import reverse
     post = Post(slug='my-post')
-    assert post.get_absolute_url() == '/posts/my-post/'
+    assert post.get_absolute_url() == reverse('blog:post_detail', kwargs={'slug': 'my-post'})
 
 
 def test_post_is_published(sample_post):
