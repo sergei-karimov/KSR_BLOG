@@ -1,3 +1,4 @@
+import math
 import re
 from pathlib import Path
 from django.conf import settings
@@ -30,54 +31,67 @@ def extract_excerpt(content_md: str, max_chars: int = 200) -> str:
     return ''
 
 
-def sync_posts_from_dir(posts_dir: Path) -> None:
+def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> None:
+    if base_dir is None:
+        base_dir = posts_dir
+    errors = 0
     for md_file in sorted(posts_dir.glob('*.md')):
-        post_data = frontmatter.load(str(md_file))
-        metadata = post_data.metadata
-        content_md = post_data.content
+        try:
+            post_data = frontmatter.load(str(md_file))
+            metadata = post_data.metadata
+            content_md = post_data.content
 
-        slug = md_file.stem
-        title = metadata.get('title', slug)
-        status = metadata.get('status', 'draft')
-        comments_enabled = bool(metadata.get('comments', True))
-        excerpt = metadata.get('excerpt', '') or extract_excerpt(content_md)
-        tag_names = metadata.get('tags', [])
+            slug = md_file.stem
+            title = metadata.get('title', slug)
+            status = metadata.get('status', 'draft')
+            comments_enabled = bool(metadata.get('comments', True))
+            excerpt = metadata.get('excerpt', '') or extract_excerpt(content_md)
+            tag_names = metadata.get('tags', [])
 
-        raw_date = metadata.get('date')
-        if isinstance(raw_date, (datetime, date)):
-            published_at = timezone.make_aware(
-                datetime.combine(raw_date, datetime.min.time())
-                if isinstance(raw_date, date) and not isinstance(raw_date, datetime)
-                else raw_date
+            raw_date = metadata.get('date')
+            if isinstance(raw_date, (datetime, date)):
+                if isinstance(raw_date, date) and not isinstance(raw_date, datetime):
+                    raw_date = datetime.combine(raw_date, datetime.min.time())
+                published_at = timezone.make_aware(raw_date) if timezone.is_naive(raw_date) else raw_date
+            else:
+                published_at = None
+
+            content_html = render_markdown(content_md)
+            word_count = len(content_md.split())
+            reading_time = max(1, math.ceil(word_count / 200))
+
+            try:
+                rel_path = str(md_file.relative_to(base_dir))
+            except ValueError:
+                rel_path = str(md_file)
+
+            post, _ = Post.objects.update_or_create(
+                slug=slug,
+                defaults={
+                    'title': title,
+                    'content_md': content_md,
+                    'content_html': content_html,
+                    'excerpt': excerpt,
+                    'status': status,
+                    'comments_enabled': comments_enabled,
+                    'file_path': rel_path,
+                    'published_at': published_at,
+                    'reading_time': reading_time,
+                },
             )
-        else:
-            published_at = None
 
-        content_html = render_markdown(content_md)
-
-        post, _ = Post.objects.update_or_create(
-            slug=slug,
-            defaults={
-                'title': title,
-                'content_md': content_md,
-                'content_html': content_html,
-                'excerpt': excerpt,
-                'status': status,
-                'comments_enabled': comments_enabled,
-                'file_path': str(md_file.relative_to(md_file.parent.parent.parent))
-                    if md_file.parent.parent.parent.exists() else str(md_file),
-                'published_at': published_at,
-            },
-        )
-        post.reading_time = post.compute_reading_time()
-        post.save(update_fields=['reading_time'])
-
-        tags = []
-        for tag_name in tag_names:
-            tag_slug = slugify(tag_name)
-            tag, _ = Tag.objects.get_or_create(slug=tag_slug, defaults={'name': tag_name})
-            tags.append(tag)
-        post.tags.set(tags)
+            tags = []
+            for tag_name in tag_names:
+                tag_slug = slugify(tag_name)
+                tag, _ = Tag.objects.get_or_create(slug=tag_slug, defaults={'name': tag_name})
+                tags.append(tag)
+            post.tags.set(tags)
+        except Exception as exc:
+            errors += 1
+            import traceback
+            traceback.print_exc()
+            print(f'Error processing {md_file}: {exc}')
+    return errors
 
 
 class Command(BaseCommand):
@@ -88,6 +102,6 @@ class Command(BaseCommand):
         if not posts_dir.exists():
             self.stderr.write(f'Content directory not found: {posts_dir}')
             return
-        sync_posts_from_dir(posts_dir)
+        sync_posts_from_dir(posts_dir, base_dir=settings.BASE_DIR)
         count = Post.objects.count()
         self.stdout.write(self.style.SUCCESS(f'Synced posts. Total in DB: {count}'))
