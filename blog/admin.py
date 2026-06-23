@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from blog.models import Post, Tag, Subscriber, Comment
 from blog.management.commands.sync_posts import render_markdown
 
@@ -33,7 +34,7 @@ class PostAdmin(admin.ModelAdmin):
             html = render_markdown(obj.content_md)
             return format_html(
                 '<div style="max-height:400px;overflow:auto;border:1px solid #ccc;padding:1em">{}</div>',
-                format_html(html)
+                mark_safe(html)
             )
         return '—'
     content_html_preview.short_description = 'Preview'
@@ -48,14 +49,20 @@ class PostAdmin(admin.ModelAdmin):
 class SubscriberAdmin(admin.ModelAdmin):
     list_display = ['email', 'confirmed', 'created_at']
     list_filter = ['confirmed']
+    search_fields = ['email']
     readonly_fields = ['unsubscribe_token', 'created_at']
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ['author_name', 'post', 'approved', 'created_at']
+    list_display = ['author_name', 'post', 'approved', 'created_at', 'body_preview']
     list_filter = ['approved', 'post']
+    search_fields = ['author_name', 'email', 'body']
     actions = ['approve_comments']
+
+    def body_preview(self, obj):
+        return obj.body[:80]
+    body_preview.short_description = 'Comment'
 
     @admin.action(description='Approve selected comments')
     def approve_comments(self, request, queryset):
