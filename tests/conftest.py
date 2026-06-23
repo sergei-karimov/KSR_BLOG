@@ -1,4 +1,20 @@
 import pytest
+import sys
+
+# Django 5.1 + Python 3.14 compatibility fix:
+# Python 3.14 changed copy(super()) behavior; patch BaseContext.__copy__ to work correctly.
+if sys.version_info >= (3, 14):
+    from copy import copy as _copy
+    from django.template.context import BaseContext
+
+    def _fixed_base_context_copy(self):
+        duplicate = object.__new__(type(self))
+        duplicate.__dict__.update(self.__dict__)
+        duplicate.dicts = self.dicts[:]
+        return duplicate
+
+    BaseContext.__copy__ = _fixed_base_context_copy
+
 
 @pytest.fixture
 def sample_post(db):
