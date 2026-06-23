@@ -49,3 +49,23 @@ def test_subscribe_post_creates_subscriber(client):
     assert response.status_code == 200
     from blog.models import Subscriber
     assert Subscriber.objects.filter(email='test@example.com').exists()
+
+
+def test_confirm_subscription_sets_confirmed(client):
+    import uuid
+    from blog.models import Subscriber
+    token = uuid.uuid4()
+    Subscriber.objects.create(email='sub@example.com', confirmed=False, unsubscribe_token=token)
+    response = client.get(reverse('blog:confirm_subscription', kwargs={'token': token}))
+    assert response.status_code == 200
+    assert Subscriber.objects.get(email='sub@example.com').confirmed is True
+
+
+def test_unsubscribe_deletes_on_post(client):
+    import uuid
+    from blog.models import Subscriber
+    token = uuid.uuid4()
+    Subscriber.objects.create(email='sub2@example.com', confirmed=True, unsubscribe_token=token)
+    response = client.post(reverse('blog:unsubscribe', kwargs={'token': token}))
+    assert response.status_code == 200
+    assert not Subscriber.objects.filter(email='sub2@example.com').exists()

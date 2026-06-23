@@ -2,9 +2,11 @@ import uuid
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db import ProgrammingError, OperationalError
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib import messages
+from django.urls import reverse
 
 from blog.models import Post, Tag, Subscriber, Comment
 from blog.forms import SubscribeForm, CommentForm
@@ -41,7 +43,7 @@ def post_list(request):
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug, status='published')
     related = _published_posts().filter(tags__in=post.tags.all()).exclude(pk=post.pk).distinct()[:3]
-    comment_form = CommentForm()
+    comment_form = CommentForm() if post.comments_enabled else None
 
     if request.method == 'POST' and post.comments_enabled:
         comment_form = CommentForm(request.POST)
@@ -82,7 +84,7 @@ def search(request):
                 .filter(rank__gte=0.1)
                 .order_by('-rank')
             )
-        except Exception:
+        except (ImportError, ProgrammingError, OperationalError):
             results = Post.objects.filter(
                 status='published'
             ).filter(Q(title__icontains=query) | Q(content_md__icontains=query))
@@ -99,9 +101,9 @@ def subscribe(request):
                 email=email,
                 defaults={'unsubscribe_token': uuid.uuid4()},
             )
-            if created or not subscriber.confirmed:
-                token = str(subscriber.unsubscribe_token)
-                confirm_url = f"{settings.SITE_URL}/subscribe/confirm/{token}/"
+            if not subscriber.confirmed:
+                confirm_path = reverse('blog:confirm_subscription', kwargs={'token': subscriber.unsubscribe_token})
+                confirm_url = request.build_absolute_uri(confirm_path)
                 send_mail(
                     subject='Confirm your subscription',
                     message=f'Click to confirm: {confirm_url}',
@@ -121,5 +123,7 @@ def confirm_subscription(request, token):
 
 def unsubscribe(request, token):
     subscriber = get_object_or_404(Subscriber, unsubscribe_token=token)
-    subscriber.delete()
-    return render(request, 'blog/subscribe_confirm.html', {'action': 'unsubscribed'})
+    if request.method == 'POST':
+        subscriber.delete()
+        return render(request, 'blog/subscribe_confirm.html', {'action': 'unsubscribed'})
+    return render(request, 'blog/subscribe_confirm.html', {'action': 'unsubscribe_confirm', 'token': token})
