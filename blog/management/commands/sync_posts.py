@@ -45,6 +45,7 @@ def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> int:
             title = metadata.get('title', slug)
             status = metadata.get('status', 'draft')
             comments_enabled = bool(metadata.get('comments', True))
+            cover = metadata.get('cover', '')
             excerpt = metadata.get('excerpt', '') or extract_excerpt(content_md)
             tag_names = metadata.get('tags', [])
 
@@ -74,6 +75,7 @@ def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> int:
                     'excerpt': excerpt,
                     'status': status,
                     'comments_enabled': comments_enabled,
+                    'cover': cover,
                     'file_path': rel_path,
                     'published_at': published_at,
                     'reading_time': reading_time,

@@ -1,9 +1,13 @@
 {% extends "base.html" %}
+{% load blog_extras %}
 {% block title %}{{ post.title }} — MyBlog{% endblock %}
 {% block content %}
 <div class="container">
   <div class="article-layout">
     <div>
+      {% if post.cover %}{% cover_url post.cover as img_url %}
+      <img src="{{ img_url }}" alt="{{ post.title }}" class="cover-image" />
+      {% endif %}
       <header style="margin-bottom:2rem">
         <h1 style="font-size:2rem;margin-bottom:0.5rem">{{ post.title }}</h1>
         <div class="post-meta">

@@ -35,6 +35,7 @@ class Post(models.Model):
     comments_enabled = models.BooleanField(default=True)
     file_path = models.CharField(max_length=500, blank=True)
     reading_time = models.PositiveIntegerField(default=1)
+    cover = models.CharField(max_length=500, blank=True)  # filename in static/images/posts/ or full URL
     tags = models.ManyToManyField(Tag, blank=True, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     published_at = models.DateTimeField(null=True, blank=True)
