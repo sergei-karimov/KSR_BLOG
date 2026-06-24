@@ -1,5 +1,6 @@
 ---
 title: "Игра с Суперинтеллектом"
+cover: "cyberpunk_human_vs_ai.png"
 date: 2026-06-24
 tags: [game, superintellect, agi]
 status: published
