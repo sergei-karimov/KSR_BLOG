@@ -14,12 +14,12 @@
       <a href="{% url 'blog:home' %}" class="site-title">MyBlog</a>
       <nav>
         <a href="{% url 'blog:post_list' %}">Статьи</a>
-        <a href="{% url 'blog:subscribe' %}">Подписка</a>
       </nav>
       <div class="header-actions">
         <form class="search-form" method="get" action="{% url 'blog:search' %}">
           <input type="search" name="q" placeholder="Поиск..." value="{{ request.GET.q|default:'' }}" />
         </form>
+        <a href="{% url 'blog:subscribe' %}" class="btn" style="padding:0.3rem 0.9rem;font-size:0.9rem">Подписаться</a>
         <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
       </div>
     </div>
