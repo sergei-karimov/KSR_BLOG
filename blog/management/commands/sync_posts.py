@@ -37,7 +37,7 @@ def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> int:
     errors = 0
     for md_file in sorted(posts_dir.glob('*.md')):
         try:
-            post_data = frontmatter.load(str(md_file))
+            post_data = frontmatter.load(str(md_file), encoding='utf-8-sig')
             metadata = post_data.metadata
             content_md = post_data.content
 
