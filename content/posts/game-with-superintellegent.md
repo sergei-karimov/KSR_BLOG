@@ -1,10 +1,10 @@
 ﻿---
-title: "Диалог с суперинтеллектом"
+title: "Game with AGI"
 date: 2026-06-24
 tags: [game, superintellect, agi]
 status: published
 comments: true
-excerpt: "Первая статья из серии: разговор с искусственным интеллектом."
+excerpt: "First article of seria: Talk with AGI."
 ---
 
 # Игра с Суперинтеллектом
