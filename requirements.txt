@@ -1,5 +1,6 @@
 asgiref==3.11.1
 Django==5.1.15
+gunicorn==26.0.0
 Markdown==3.10.2
 psycopg==3.3.4
 psycopg-binary==3.3.4
