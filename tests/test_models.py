@@ -36,3 +36,23 @@ def test_reading_time_computed():
     words = ' '.join(['word'] * 400)
     post = Post(content_md=words)
     assert post.compute_reading_time() == 2
+
+
+def test_tag_get_absolute_url():
+    from blog.models import Tag
+    from django.urls import reverse
+    tag = Tag(name='Python', slug='python')
+    assert tag.get_absolute_url() == reverse('blog:tag', kwargs={'slug': 'python'})
+
+
+def test_subscriber_str(db):
+    from blog.models import Subscriber
+    sub = Subscriber(email='test@example.com')
+    assert str(sub) == 'test@example.com'
+
+
+def test_comment_str(sample_post):
+    from blog.models import Comment
+    comment = Comment(author_name='Alice', post=sample_post)
+    assert 'Alice' in str(comment)
+    assert sample_post.title in str(comment)

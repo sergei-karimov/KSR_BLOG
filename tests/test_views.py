@@ -69,3 +69,28 @@ def test_unsubscribe_deletes_on_post(client):
     response = client.post(reverse('blog:unsubscribe', kwargs={'token': token}))
     assert response.status_code == 200
     assert not Subscriber.objects.filter(email='sub2@example.com').exists()
+
+
+def test_unsubscribe_get_shows_confirmation(client):
+    import uuid
+    from blog.models import Subscriber
+    token = uuid.uuid4()
+    Subscriber.objects.create(email='sub3@example.com', confirmed=True, unsubscribe_token=token)
+    response = client.get(reverse('blog:unsubscribe', kwargs={'token': token}))
+    assert response.status_code == 200
+    assert Subscriber.objects.filter(email='sub3@example.com').exists()
+
+
+def test_post_detail_comment_post_creates_comment(client, sample_post):
+    from blog.models import Comment
+    response = client.post(
+        reverse('blog:post_detail', kwargs={'slug': sample_post.slug}),
+        {'author_name': 'Alice', 'email': 'alice@example.com', 'body': 'Great post!'},
+    )
+    assert response.status_code == 302
+    assert Comment.objects.filter(post=sample_post, author_name='Alice').exists()
+
+
+def test_post_list_multi_tag_filter(client, sample_post):
+    response = client.get(reverse('blog:post_list') + '?tag=python&tag=nonexistent')
+    assert response.status_code == 200
