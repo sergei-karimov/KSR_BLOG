@@ -31,7 +31,7 @@ def extract_excerpt(content_md: str, max_chars: int = 200) -> str:
     return ''
 
 
-def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> None:
+def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> int:
     if base_dir is None:
         base_dir = posts_dir
     errors = 0
@@ -90,7 +90,6 @@ def sync_posts_from_dir(posts_dir: Path, base_dir: Path | None = None) -> None:
             errors += 1
             import traceback
             traceback.print_exc()
-            print(f'Error processing {md_file}: {exc}')
     return errors
 
 
@@ -102,6 +101,9 @@ class Command(BaseCommand):
         if not posts_dir.exists():
             self.stderr.write(f'Content directory not found: {posts_dir}')
             return
-        sync_posts_from_dir(posts_dir, base_dir=settings.BASE_DIR)
+        errors = sync_posts_from_dir(posts_dir, base_dir=settings.BASE_DIR)
         count = Post.objects.count()
-        self.stdout.write(self.style.SUCCESS(f'Synced posts. Total in DB: {count}'))
+        if errors:
+            self.stderr.write(self.style.WARNING(f'Synced with {errors} error(s). Total in DB: {count}'))
+        else:
+            self.stdout.write(self.style.SUCCESS(f'Synced posts. Total in DB: {count}'))
