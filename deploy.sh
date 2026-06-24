@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+VENV_DIR="$(dirname "$0")/venv"
+if [ -f "$VENV_DIR/bin/activate" ]; then
+    source "$VENV_DIR/bin/activate"
+fi
+
 echo "==> Pulling latest code"
 git pull
 
@@ -20,6 +25,12 @@ echo "==> Notifying subscribers"
 python manage.py notify_subscribers --settings=myblog.settings.production
 
 echo "==> Reloading Gunicorn"
-pkill -HUP gunicorn || true
+if pgrep -x gunicorn > /dev/null; then
+    pkill -HUP gunicorn
+    echo "Gunicorn reloaded."
+else
+    echo "WARNING: Gunicorn is not running. Start it manually." >&2
+    exit 1
+fi
 
 echo "==> Done"
