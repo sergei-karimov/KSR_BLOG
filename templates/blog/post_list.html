@@ -4,7 +4,7 @@
 <div class="container">
   <h1 style="margin-bottom:1.5rem">Все статьи</h1>
 
-  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
+  <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
     <a href="{% url 'blog:post_list' %}" class="tag-badge {% if not active_tag %}btn{% endif %}">Все</a>
     {% for tag in tags %}
       <a href="{% url 'blog:post_list' %}?tag={{ tag.slug }}"
