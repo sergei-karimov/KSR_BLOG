@@ -112,6 +112,20 @@ nav a:hover { color: var(--accent); text-decoration: none; }
 }
 .tag-badge:hover { color: var(--accent); text-decoration: none; }
 
+/* Tag filter bar */
+.tag-filter { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tag-filter-item {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding: 0.2rem 0.1rem;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.tag-filter-item:hover { color: var(--accent); }
+.tag-filter-item.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
 /* Hero post */
 .hero-post {
   background: var(--bg-secondary);

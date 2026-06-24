@@ -25,18 +25,16 @@ def home(request):
 
 
 def post_list(request):
-    tag_slug = request.GET.get('tag')
+    selected_slugs = request.GET.getlist('tag')
     posts = _published_posts()
-    active_tag = None
-    if tag_slug:
-        active_tag = get_object_or_404(Tag, slug=tag_slug)
-        posts = posts.filter(tags=active_tag)
+    if selected_slugs:
+        posts = posts.filter(tags__slug__in=selected_slugs).distinct()
     paginator = Paginator(posts, 10)
     page = paginator.get_page(request.GET.get('page'))
     return render(request, 'blog/post_list.html', {
         'page_obj': page,
         'tags': Tag.objects.all(),
-        'active_tag': active_tag,
+        'selected_slugs': selected_slugs,
     })
 
 

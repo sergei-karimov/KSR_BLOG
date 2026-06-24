@@ -4,11 +4,12 @@
 <div class="container">
   <h1 style="margin-bottom:1.5rem">Все статьи</h1>
 
-  <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
-    <a href="{% url 'blog:post_list' %}" class="tag-badge {% if not active_tag %}btn{% endif %}">Все</a>
+  <div class="tag-filter" id="tag-filter">
     {% for tag in tags %}
-      <a href="{% url 'blog:post_list' %}?tag={{ tag.slug }}"
-         class="tag-badge {% if active_tag.slug == tag.slug %}btn{% endif %}">{{ tag.name }}</a>
+      <span class="tag-filter-item {% if tag.slug in selected_slugs %}active{% endif %}"
+            data-slug="{{ tag.slug }}">
+        {{ tag.name }}{% if tag.slug in selected_slugs %} ×{% endif %}
+      </span>
     {% endfor %}
   </div>
 

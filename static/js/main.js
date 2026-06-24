@@ -20,3 +20,27 @@
     });
   }
 })();
+
+// Tag filter multi-select
+(function () {
+  var items = document.querySelectorAll('.tag-filter-item');
+  if (!items.length) return;
+
+  items.forEach(function (el) {
+    el.addEventListener('click', function () {
+      var slug = this.dataset.slug;
+      var url = new URL(window.location.href);
+      var selected = url.searchParams.getAll('tag');
+
+      if (selected.includes(slug)) {
+        url.searchParams.delete('tag');
+        selected.filter(function (s) { return s !== slug; })
+                .forEach(function (s) { url.searchParams.append('tag', s); });
+      } else {
+        url.searchParams.append('tag', slug);
+      }
+      url.searchParams.delete('page');
+      window.location.href = url.toString();
+    });
+  });
+})();
