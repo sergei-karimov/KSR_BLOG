@@ -1,33 +1,39 @@
 {% extends "base.html" %}
 {% load blog_extras %}
-{% block title %}MyBlog — Главная{% endblock %}
+{% block title %}KSR_BLOG — Главная{% endblock %}
 {% block content %}
-<div class="container">
-  {% if latest_post %}
-  <div class="hero-post">
+
+{% if latest_post %}
+<div class="hero-wrap" id="hero-wrap">
+  <canvas class="hero-canvas" id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-label">&#9619;&#9618;&#9617; LATEST_TRANSMISSION &#9617;&#9618;&#9619;</div>
     {% if latest_post.cover %}{% cover_url latest_post.cover as hero_img %}
     <a href="{{ latest_post.get_absolute_url }}">
-      <img src="{{ hero_img }}" alt="{{ latest_post.title }}" class="cover-image" />
+      <img src="{{ hero_img }}" alt="{{ latest_post.title }}" class="cover-image" style="max-height:280px;margin-bottom:1.25rem" />
     </a>
     {% endif %}
-    <h1><a href="{{ latest_post.get_absolute_url }}">{{ latest_post.title }}</a></h1>
-    {% if latest_post.excerpt %}<p class="post-excerpt">{{ latest_post.excerpt }}</p>{% endif %}
-    <div class="post-meta">
-      <span>{{ latest_post.published_at|date:"j F Y" }}</span>
-      <span>{{ latest_post.reading_time }} мин</span>
-      {% for tag in latest_post.tags.all %}
-        <a href="{% url 'blog:tag' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
-      {% endfor %}
-    </div>
+    <h1 class="hero-title">
+      <a href="{{ latest_post.get_absolute_url }}" style="color:inherit;text-decoration:none">{{ latest_post.title }}</a>
+    </h1>
+    <div class="hero-meta">{{ latest_post.published_at|date:"Y-m-d" }} &nbsp;·&nbsp; {{ latest_post.reading_time }} min read</div>
+    {% if latest_post.excerpt %}<p class="hero-excerpt">{{ latest_post.excerpt }}</p>{% endif %}
+    <a href="{{ latest_post.get_absolute_url }}" class="hero-read-link">читать →_</a>
   </div>
-  {% endif %}
+</div>
+{% endif %}
 
+<div class="container">
+  {% if posts %}
+  <div class="archive-label">&#9617; ARCHIVE &#9617;</div>
   <div class="post-grid">
     {% for post in posts %}
       {% include "components/post_card.html" %}
-    {% empty %}
-      <p>Статей пока нет.</p>
     {% endfor %}
   </div>
+  {% else %}
+  <p style="font-family:var(--font-mono);color:var(--text-muted)">&gt; Статей пока нет._</p>
+  {% endif %}
 </div>
+
 {% endblock %}

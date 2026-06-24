@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Все статьи — MyBlog{% endblock %}
+{% block title %}Все статьи — KSR_BLOG{% endblock %}
 {% block content %}
 <div class="container">
-  <h1 style="margin-bottom:1.5rem">Все статьи</h1>
+  <div class="page-heading">&#9617; ARCHIVE &#9617;</div>
 
+  {% if tags %}
   <div class="tag-filter" id="tag-filter">
     {% for tag in tags %}
       <span class="tag-filter-item {% if tag.slug in selected_slugs %}active{% endif %}"
@@ -12,23 +13,24 @@
       </span>
     {% endfor %}
   </div>
+  {% endif %}
 
   <div class="post-grid">
     {% for post in page_obj %}
       {% include "components/post_card.html" %}
     {% empty %}
-      <p>Нет статей по этому тегу.</p>
+      <p style="font-family:var(--font-mono);color:var(--text-muted)">&gt; Нет статей по этому тегу._</p>
     {% endfor %}
   </div>
 
   {% if page_obj.has_other_pages %}
   <div class="pagination">
     {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}">&larr;</a>
+      <a href="?page={{ page_obj.previous_page_number }}{% for slug in selected_slugs %}&tag={{ slug }}{% endfor %}">&larr;</a>
     {% endif %}
     <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}">&rarr;</a>
+      <a href="?page={{ page_obj.next_page_number }}{% for slug in selected_slugs %}&tag={{ slug }}{% endfor %}">&rarr;</a>
     {% endif %}
   </div>
   {% endif %}
