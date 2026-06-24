@@ -15,14 +15,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         since = timezone.now() - timedelta(hours=options['hours'])
-        new_posts = Post.objects.filter(status='published', published_at__gte=since)
+        new_posts = list(Post.objects.filter(status='published', published_at__gte=since))
 
-        if not new_posts.exists():
+        if not new_posts:
             self.stdout.write('No new posts to notify about.')
             return
 
-        subscribers = Subscriber.objects.filter(confirmed=True)
-        if not subscribers.exists():
+        subscribers = list(Subscriber.objects.filter(confirmed=True))
+        if not subscribers:
             self.stdout.write('No confirmed subscribers.')
             return
 
@@ -39,5 +39,5 @@ class Command(BaseCommand):
                 send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [subscriber.email], fail_silently=True)
 
         self.stdout.write(self.style.SUCCESS(
-            f'Notified {subscribers.count()} subscriber(s) about {new_posts.count()} post(s).'
+            f'Notified {len(subscribers)} subscriber(s) about {len(new_posts)} post(s).'
         ))
