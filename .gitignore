@@ -10,3 +10,5 @@ staticfiles/
 *.log
 .coverage
 coverage.xml
+.idea/
+
