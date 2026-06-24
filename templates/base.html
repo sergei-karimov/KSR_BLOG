@@ -36,6 +36,7 @@
     {% block content %}{% endblock %}
   </main>
 
+  {% block subscribe_bar %}
   <div class="subscribe-bar">
     <h3>Подписаться на новые статьи</h3>
     <form class="subscribe-inline" method="post" action="{% url 'blog:subscribe' %}">
@@ -44,6 +45,7 @@
       <button type="submit" class="btn">Подписаться</button>
     </form>
   </div>
+  {% endblock %}
 
   <footer>
     <p>&copy; {% now "Y" %} MyBlog · <a href="{% url 'blog:post_list' %}">Все статьи</a></p>
