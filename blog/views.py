@@ -78,7 +78,7 @@ def search(request):
             from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
             vector = SearchVector('title', weight='A') + SearchVector('content_md', weight='B')
             search_query = SearchQuery(query)
-            results = (
+            results = list(
                 Post.objects.filter(status='published')
                 .annotate(rank=SearchRank(vector, search_query))
                 .filter(rank__gte=0.1)
