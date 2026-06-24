@@ -1,1 +1,20 @@
-{% extends "base.html" %}{% block content %}subscribe{% endblock %}
+{% extends "base.html" %}
+{% block title %}Подписка — MyBlog{% endblock %}
+{% block content %}
+<div class="container" style="max-width:500px">
+  <h1 style="margin-bottom:1.5rem">Подписаться на блог</h1>
+  {% if submitted %}
+    <p>Проверьте почту и подтвердите подписку.</p>
+  {% else %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}<p style="color:red;font-size:0.85rem">{{ form.email.errors.0 }}</p>{% endif %}
+      </div>
+      <button type="submit" class="btn">Подписаться</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

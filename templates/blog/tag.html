@@ -1,1 +1,10 @@
-{% extends "base.html" %}{% block content %}tag{% endblock %}
+{% extends "base.html" %}
+{% block title %}#{{ tag.name }} — MyBlog{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 style="margin-bottom:1.5rem">Тег: #{{ tag.name }}</h1>
+  <div class="post-grid">
+    {% for post in posts %}{% include "components/post_card.html" %}{% empty %}<p>Нет статей.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

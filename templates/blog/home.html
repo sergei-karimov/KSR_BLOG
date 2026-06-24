@@ -1,1 +1,27 @@
-{% extends "base.html" %}{% block content %}home{% endblock %}
+{% extends "base.html" %}
+{% block title %}MyBlog — Главная{% endblock %}
+{% block content %}
+<div class="container">
+  {% if latest_post %}
+  <div class="hero-post">
+    <h1><a href="{{ latest_post.get_absolute_url }}">{{ latest_post.title }}</a></h1>
+    {% if latest_post.excerpt %}<p class="post-excerpt">{{ latest_post.excerpt }}</p>{% endif %}
+    <div class="post-meta">
+      <span>{{ latest_post.published_at|date:"j F Y" }}</span>
+      <span>{{ latest_post.reading_time }} мин</span>
+      {% for tag in latest_post.tags.all %}
+        <a href="{% url 'blog:tag' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="post-grid">
+    {% for post in posts %}
+      {% include "components/post_card.html" %}
+    {% empty %}
+      <p>Статей пока нет.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

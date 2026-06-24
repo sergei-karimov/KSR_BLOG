@@ -1,1 +1,35 @@
-{% extends "base.html" %}{% block content %}list{% endblock %}
+{% extends "base.html" %}
+{% block title %}Все статьи — MyBlog{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 style="margin-bottom:1.5rem">Все статьи</h1>
+
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
+    <a href="{% url 'blog:post_list' %}" class="tag-badge {% if not active_tag %}btn{% endif %}">Все</a>
+    {% for tag in tags %}
+      <a href="{% url 'blog:post_list' %}?tag={{ tag.slug }}"
+         class="tag-badge {% if active_tag.slug == tag.slug %}btn{% endif %}">{{ tag.name }}</a>
+    {% endfor %}
+  </div>
+
+  <div class="post-grid">
+    {% for post in page_obj %}
+      {% include "components/post_card.html" %}
+    {% empty %}
+      <p>Нет статей по этому тегу.</p>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}">&larr;</a>
+    {% endif %}
+    <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if active_tag %}&tag={{ active_tag.slug }}{% endif %}">&rarr;</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

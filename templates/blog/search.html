@@ -1,1 +1,10 @@
-{% extends "base.html" %}{% block content %}search{% endblock %}
+{% extends "base.html" %}
+{% block title %}Поиск: {{ query }} — MyBlog{% endblock %}
+{% block content %}
+<div class="container">
+  <h1 style="margin-bottom:1.5rem">Результаты поиска: «{{ query }}»</h1>
+  <div class="post-grid">
+    {% for post in results %}{% include "components/post_card.html" %}{% empty %}<p>Ничего не найдено.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}
