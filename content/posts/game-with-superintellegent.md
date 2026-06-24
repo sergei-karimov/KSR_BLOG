@@ -1,4 +1,4 @@
-﻿---
+---
 title: "Game with AGI"
 date: 2026-06-24
 tags: [game, superintellect, agi]
