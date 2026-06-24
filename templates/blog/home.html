@@ -1,9 +1,15 @@
 {% extends "base.html" %}
+{% load blog_extras %}
 {% block title %}MyBlog — Главная{% endblock %}
 {% block content %}
 <div class="container">
   {% if latest_post %}
   <div class="hero-post">
+    {% if latest_post.cover %}{% cover_url latest_post.cover as hero_img %}
+    <a href="{{ latest_post.get_absolute_url }}">
+      <img src="{{ hero_img }}" alt="{{ latest_post.title }}" class="cover-image" />
+    </a>
+    {% endif %}
     <h1><a href="{{ latest_post.get_absolute_url }}">{{ latest_post.title }}</a></h1>
     {% if latest_post.excerpt %}<p class="post-excerpt">{{ latest_post.excerpt }}</p>{% endif %}
     <div class="post-meta">
