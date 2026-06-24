@@ -8,10 +8,14 @@
   {% elif action == 'unsubscribe_confirm' %}
     <h1>Подтвердить отписку?</h1>
     <p style="margin-top:1rem;color:var(--text-muted)">Нажмите кнопку ниже, чтобы отписаться от рассылки.</p>
+    {% if token %}
     <form method="post" action="{% url 'blog:unsubscribe' token=token %}">
       {% csrf_token %}
       <button type="submit" class="btn" style="margin-top:1.5rem">Отписаться</button>
     </form>
+    {% else %}
+    <p style="color:red">Неверная ссылка для отписки.</p>
+    {% endif %}
   {% else %}
     <h1>Вы отписались</h1>
     <p style="margin-top:1rem;color:var(--text-muted)">Вы больше не будете получать письма.</p>

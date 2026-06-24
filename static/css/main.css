@@ -10,6 +10,8 @@
   --code-bg: #f4f4f4;
   --font-body: system-ui, -apple-system, sans-serif;
   --font-mono: 'Cascadia Code', 'Fira Code', monospace;
+  --message-bg: #d4edda;
+  --message-text: #155724;
 }
 
 [data-theme="dark"] {
@@ -22,6 +24,8 @@
   --border: #30363d;
   --card-shadow: 0 2px 8px rgba(0,0,0,0.4);
   --code-bg: #1e1e2e;
+  --message-bg: #1a3a2a;
+  --message-text: #4ade80;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -224,7 +228,7 @@ footer { border-top: 1px solid var(--border); padding: 1.5rem; text-align: cente
 
 /* Messages */
 .messages { list-style: none; margin-bottom: 1rem; }
-.messages li { padding: 0.75rem 1rem; border-radius: 6px; background: #d4edda; color: #155724; margin-bottom: 0.5rem; }
+.messages li { padding: 0.75rem 1rem; border-radius: 6px; background: var(--message-bg); color: var(--message-text); margin-bottom: 0.5rem; }
 
 /* Responsive */
 @media (max-width: 768px) {

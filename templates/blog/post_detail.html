@@ -15,6 +15,7 @@
         </div>
       </header>
 
+      {# content_html is rendered server-side from author-controlled Markdown via python-markdown with codehilite — no user-supplied raw HTML pass-through #}
       <article class="article-content">{{ post.content_html|safe }}</article>
 
       {% if post.comments_enabled %}
