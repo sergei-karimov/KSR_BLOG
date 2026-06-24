@@ -12,3 +12,4 @@ staticfiles/
 coverage.xml
 .idea/
 
+.superpowers/
