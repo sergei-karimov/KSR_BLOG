@@ -5,7 +5,7 @@
     <span>{{ post.published_at|date:"j F Y" }}</span>
     <span>{{ post.reading_time }} мин</span>
     {% for tag in post.tags.all %}
-      <a href="{% url 'blog:tag' tag.slug %}" class="tag-badge">{{ tag.name }}</a>
+      <a href="{% url 'blog:post_list' %}?tag={{ tag.slug }}" class="tag-badge">{{ tag.name }}</a>
     {% endfor %}
   </div>
 </article>
